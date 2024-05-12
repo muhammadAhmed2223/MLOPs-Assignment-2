@@ -63,26 +63,26 @@ output_file = "/home/kali/airflow/dags/MLOPsAssignment/cleaned_dataset.csv"
 
 with DAG("my-dag", start_date=datetime.now(), schedule="@daily", catchup=False) as dag:
 
-    extractingDataTask = PythonOperator(
-        task_id="Extracting_Data",
+    extractTask = PythonOperator(
+        task_id="Extract",
         python_callable=extract_data,
         op_kwargs={'urls': urls, 'file_name': file_name},
     )
 
-    transformingDataTask = PythonOperator(
-        task_id="Transforming_Data",
+    transformTask = PythonOperator(
+        task_id="Transform",
         python_callable=transform_data,
         op_kwargs={'input_file': input_file, 'output_file': output_file},
     )
 
-    loadingDataTask = PythonOperator(
-        task_id="Loading_Data",
+    loadTask = PythonOperator(
+        task_id="Load",
         python_callable=load,
     )
 
-    gitPushTask = BashOperator(
-        task_id="Git_Push",
+    gitPush = BashOperator(
+        task_id="Push-to-Git",
         bash_command="git -C /home/kali/airflow/dags/MLOPsAssignment push origin master",
     )
 
-    extractingDataTask >> transformingDataTask >> loadingDataTask >> gitPushTask
+    extractTask >> transformTask >> loadTask >> gitPush
